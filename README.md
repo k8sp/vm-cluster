@@ -1,10 +1,9 @@
 ## vm-cluster自动化安装k8s
 ### 环境准备
-vm1: bootstrapper
 
 | 虚拟机        | 角色       　|网络组成　|
 | ------------- |:-------------:| ----:|
-| bootstrapper  | dnsmasq(dhcp,dns),cloudconfig server,boorstrapper server,registry|eth0 nat,eth1内部网络 |
+| bootstrapper  | dnsmasq(dhcp,dns),cloudconfig server,boorstrapper server,registry|eth0 nat网络,eth1内部网络 |
 | master        | k8s master      |eth0 内部网络|
 | worker        | k8s worker     |eth0 内部网络|
 ### 操作步骤
