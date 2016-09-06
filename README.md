@@ -90,7 +90,7 @@ ENV DOCKER_API_VERSION=1.22
 问题３：    
 无法找到pxe server    
 解决办法：
-删除dnsmasq.conf中如下三行
+删除dnsmasq.conf中如下两行
 ```
  interface=eth0
  bind-interfaces
