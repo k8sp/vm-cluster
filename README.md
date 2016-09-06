@@ -63,8 +63,7 @@ Install CoreOS from network server
 ```
 直接按enter，然后开始从pxe server加载coreos镜像    
 注意：coreos首次仅仅是内存安装，可以通过jounalctl -xef 查看系统日志，当提示coreos硬盘安装成功后系统会重启。
-
-重启后，会再次从网络加载coreos安装镜像，由于刚才已经安装成功了，所以此时需要关闭master虚拟机,并通过virtualbox窗口修改master虚拟机从硬盘启动，然后启动master虚拟机，coreos虚拟机会根据cloudconfig配置文件自动化安装k8s
+重启后，coreos虚拟机会根据cloudconfig配置文件自动化安装k8s
 
 几分钟后，可以通过docker ps查看k8s master是否启动成功
 
@@ -95,6 +94,5 @@ ENV DOCKER_API_VERSION=1.22
 ```
  interface=eth0
  bind-interfaces
- domain=k8s.baifendian.com
 
 ```
