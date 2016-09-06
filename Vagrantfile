@@ -67,7 +67,7 @@ openssl genrsa -out ca-key.pem 2048
 openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"
 
 #修复无法找到pxe　server的异常
-sed -i '/interface=eth0/,/domain=k8s.baifendian.com/d' /bsroot/config/dnsmasq.conf
+sed -i '/interface=eth0/,/bind-interfaces/d' /bsroot/config/dnsmasq.conf
 #修复docker api client 和server 版本不一致的问题
 cd ~/auto-install
 sed -i '/FROM golang:alpine/a\ENV DOCKER_API_VERSION=1.22' ./Dockerfile
@@ -97,7 +97,7 @@ docker run -d --net=host \
          ms.functional_vboxsf = false
          ms.gui = true
     	 ms.memory = "1024"
-    	 ms.customize ["modifyvm", :id, "--boot1", "net", "--boot2", "disk"]
+    	 ms.customize ["modifyvm", :id, "--boot1", "disk", "--boot2", "net"]
       end
     end
 
@@ -109,7 +109,7 @@ docker run -d --net=host \
       worker.vm.provider "virtualbox" do |wk|
          wk.gui = true
          wk.memory = "1024"
-         wk.customize ["modifyvm", :id, "--boot1", "net", "--boot2", "disk"]
+         wk.customize ["modifyvm", :id, "--boot1", "disk", "--boot2", "net"]
       end
     end
 
