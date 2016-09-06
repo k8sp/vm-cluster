@@ -1,4 +1,4 @@
-## vm-cluster自动化安装k8s
+## vm-cluster 自动化安装k8s
 ### 环境准备
 
 | 虚拟机        | 角色       　|网络组成　|
@@ -6,8 +6,12 @@
 | bootstrapper  | dnsmasq(dhcp,dns),cloudconfig server,boorstrapper server,registry|eth0 nat网络,eth1内部网络 |
 | master        | k8s master      |eth0 内部网络|
 | worker        | k8s worker     |eth0 内部网络|
+
+注意：内部网络用于三台虚拟机之间相互通信使用
+
 ### 操作步骤
-１．修改vagrantfile中cluster-desc配置,如果仅仅测试使用，保持默认即可
+
+１．修改 vagrantfile 中 cluster-desc 配置,如果仅仅测试使用，保持默认即可
 ```
 cat << EOF > /root/auto-install/cloud-config-server/template/unisound-ailab/build_config.yml 
 bootstrapper: 192.168.8.101
@@ -42,30 +46,30 @@ sed -i -e 's#<SSH_KEY>#'"$ssh_key"'#' /root/auto-install/cloud-config-server/tem
 cd vm-cluster
 vagrant　bootstrapper
 ```
-* 默认启动时会从github下载bootstrapper源码
-* 执行bsroot.sh脚本(下载pxe镜像,生成pxe的配置，dns dhcp配置，registry配置,配置cloudconfig server环境,下载k8s依赖镜像）
+* 默认启动时会从 github 下载 bootstrapper 源码
+* 执行 bsroot.sh 脚本(下载pxe镜像,生成 pxe 的配置，dns dhcp配置，registry 配置,配置 cloudconfig server 环境,下载k8s依赖镜像）
 * 生成ca证书
-* 根据Dockerfile生成bootstrapper镜像
-* 启动bootstrapper容器（启动dns，dhcp,docker registry,cloudconfig server）
+* 根据 Dockerfile 生成 bootstrapper 镜像
+* 启动 bootstrapper 容器（启动 dns，dhcp,docker registry,cloudconfig server）
 
-３．启动k8s master，安装k8s master节点
+３．启动 k8s master，安装 k8s master 节点
 ```
 cd vm-cluster
 vagrant　master
 ```
-启动的过程成会弹出virtualbox窗口，在窗口中会出现如下提示：
+启动的过程成会弹出 virtualbox 窗口，在窗口中会出现如下提示：
 ```
 Press F8 for menu.(59)
 ```
-按F8后,会出现从网络安装CoreOS的提示如下提示：
+按 F8 后,会出现从网络安装 CoreOS 的提示如下提示：
 ```
 Install CoreOS from network server
 ```
-直接按enter，然后开始从pxe server加载coreos镜像    
-注意：coreos首次仅仅是内存安装，可以通过jounalctl -xef 查看系统日志，当提示coreos硬盘安装成功后系统会重启。
-重启后，coreos虚拟机会根据cloudconfig配置文件自动化安装k8s。可以通过在bootstrapper　vm上ssh core@master免密码连接master　vm。几分钟后，可以通过docker ps查看k8s master是否启动成功
-
-４．安装k8s worker节点参考master节点安装步骤
+直接按 enter，然后开始从 pxe server 加载 coreos 镜像    
+注意：coreos 首次仅仅是内存安装，可以通过 jounalctl -xef 查看系统日志，当提示 coreos 硬盘安装成功后系统会重启。
+重启后，coreos 虚拟机会根据 cloudconfig 配置文件自动化安装k8s。可以通过在 bootstrapper　vm上ssh core@master 免密码连接 master　vm。几分钟后，可以通过docker ps查看 k8s master 是否启动成功
+ 
+４．安装 k8s worker 节点参考 master 节点安装步骤
 
 ###troubleshooting
 问题１：
@@ -81,16 +85,15 @@ To fix this problem, install the 'Oracle VM VirtualBox Extension Pack'
 Error response from daemon: client is newer than server (client API version: 1.23, server API version: 1.22)
 ```
 解决办法：
-修改Dockerfile，添加如何参数,　指定docker api的版本为1.22,可以解决版本不一致的问题
+修改 Dockerfile，添加如何参数,　指定 docker api 的版本为1.22,可以解决版本不一致的问题
 ```
 ENV DOCKER_API_VERSION=1.22
 ```
 问题３：    
-无法找到pxe server    
+无法找到 pxe server    
 解决办法：
-删除dnsmasq.conf中如下两行
+删除 dnsmasq.conf 中如下两行
 ```
  interface=eth0
  bind-interfaces
-
 ```
