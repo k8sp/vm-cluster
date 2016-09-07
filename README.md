@@ -72,6 +72,7 @@ Install CoreOS from network server
 ４．安装 k8s worker 节点参考 master 节点安装步骤
 
 ###troubleshooting
+
 问题１：
 ```
 Stderr: VBoxManage: error: Implementation of the USB 2.0 controller not found!
@@ -80,6 +81,10 @@ Stderr: VBoxManage: error: Implementation of the USB 2.0 controller not found!
 ```
 To fix this problem, install the 'Oracle VM VirtualBox Extension Pack'
 ```
+https://www.virtualbox.org/wiki/Downloads 可以下载安装最新的VirtualBox和Extension Pack
+* VirtualBox 5.1.4 for Linux hosts
+* VirtualBox 5.1.4 Oracle VM VirtualBox Extension Pack
+
 问题２：
 ```
 Error response from daemon: client is newer than server (client API version: 1.23, server API version: 1.22)
@@ -89,6 +94,7 @@ Error response from daemon: client is newer than server (client API version: 1.2
 ```
 ENV DOCKER_API_VERSION=1.22
 ```
+
 问题３：    
 无法找到 pxe server    
 解决办法：
