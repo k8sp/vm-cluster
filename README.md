@@ -44,7 +44,7 @@ sed -i -e 's#<SSH_KEY>#'"$ssh_key"'#' /root/auto-install/cloud-config-server/tem
 ２．启动bootstrapper
 ```
 cd vm-cluster
-vagrant　bootstrapper
+vagrant up bootstrapper
 ```
 * 默认启动时会从 github 下载 bootstrapper 源码
 * 执行 bsroot.sh 脚本(下载pxe镜像,生成 pxe 的配置，dns dhcp配置，registry 配置,配置 cloudconfig server 环境,下载k8s依赖镜像）
@@ -55,7 +55,7 @@ vagrant　bootstrapper
 ３．启动 k8s master，安装 k8s master 节点
 ```
 cd vm-cluster
-vagrant　master
+vagrant up　master
 ```
 启动的过程成会弹出 virtualbox 窗口，在窗口中会出现如下提示：
 ```
