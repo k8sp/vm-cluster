@@ -1,3 +1,4 @@
+# coding: utf-8
 $update_channel = "alpha"
 $image_version = "current"
 
@@ -14,7 +15,7 @@ Vagrant.configure("2") do |config|
     bs.vm.box_url = "https://storage.googleapis.com/stable.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % [$update_channel, $image_version]
     bs.vm.hostname = "bootstrapper"
     bs.vm.network "private_network", ip: "192.168.8.101",virtualbox__intnet: true
-    bs.vm.provision "shell", path: "install_bootstrapper.sh"
+    bs.vm.provision "shell", path: "provision_bootstrapper_vm.sh"
     bs.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.memory = "2048"
