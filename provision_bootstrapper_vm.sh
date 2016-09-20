@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #生成ssh key
-rm -rf ~/.ssh/
-/usr/bin/ssh-keygen -t rsa -f ~/.ssh/id_rsa -P ''
-cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+rm -rf /root/.ssh/
+/usr/bin/ssh-keygen -t rsa -f /root/.ssh/id_rsa -P ''
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 
 #将boostrapper 代码下载到本地
-cd ~
+cd /root
 git clone https://github.com/k8sp/sextant.git
 cd sextant
 
@@ -35,7 +35,7 @@ ssh_authorized_keys: |1+
 EOF
 
 #设置bootstrapper免密码登陆其他虚拟机
-ssh_key=`cat ~/.ssh/authorized_keys` 
+ssh_key=`cat /root/.ssh/authorized_keys` 
 sed -i -e 's#<SSH_KEY>#'"$ssh_key"'#' /root/sextant/cloud-config-server/template/unisound-ailab/build_config.yml
 
 #准备bootstrapper安装环境
@@ -44,7 +44,6 @@ sed -i -e 's#<SSH_KEY>#'"$ssh_key"'#' /root/sextant/cloud-config-server/template
 
 #生成ca证书，docker registry　tls证书
 cd /bsroot/tls
-rm -rf *
 openssl genrsa -out ca-key.pem 2048
 openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"
 openssl genrsa -out bootstrapper.key 2048
@@ -60,7 +59,7 @@ systemctl restart docker
 sed -i '/interface=eth0/,/bind-interfaces/d' /bsroot/config/dnsmasq.conf
 
 #修复docker api client 和server 版本不一致的问题
-cd ~/sextant
+cd /root/sextant
 sed -i '/FROM golang:alpine/a\ENV DOCKER_API_VERSION=1.22' ./Dockerfile
 
 #配置docker registry tls证书
