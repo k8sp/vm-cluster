@@ -1,3 +1,4 @@
+# coding: utf-8
 $update_channel = "alpha"
 $image_version = "current"
 
