@@ -25,4 +25,3 @@ docker run -d --net=host \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /bsroot:/bsroot \
   bootstrapper
-
