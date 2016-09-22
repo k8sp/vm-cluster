@@ -3,17 +3,18 @@
 
 | 虚拟机        | 角色       　|网络组成　|
 | ------------- |-------------| ----|
-| bootstrapper  | dnsmasq(dhcp,dns),cloudconfig server,boorstrapper server,registry|eth0 nat网络,eth1内部网络 |
+| bootstrapper  | dnsmasq(dhcp,dns),cloudconfig server,boorstrapper server,registry|eth0 nat网络,eth1内部网络 ,eth2 hostonly网络|
 | master        | k8s master      |eth0 内部网络|
 | worker        | k8s worker     |eth0 内部网络|
 
-注意：内部网络用于三台虚拟机之间相互通信使用
+注意:    
+1,内部网络用于三台虚拟机之间相互通信使用    
+2,vagrant的挂载需要依赖hostonly网卡
 
 ### 操作步骤
 
-１．修改 vagrantfile 中 cluster-desc 配置,如果仅仅测试使用，保持默认即可
+１．修改 vagrantfile 中 cluster-desc.yml.template配置,如果仅仅测试使用，保持默认即可
 ```
-cat << EOF > /root/auto-install/cloud-config-server/template/unisound-ailab/build_config.yml 
 bootstrapper: 192.168.8.101
 subnet: 192.168.8.0
 netmask: 255.255.255.0
@@ -22,8 +23,13 @@ iphigh: 192.168.8.220
 routers: [192.168.8.101]
 broadcast: 192.168.8.255
 nameservers: [192.168.8.101, 8.8.8.8, 8.8.4.4]
-domainname: "192.168.8.101"
+domainname: "k8s.baifendian.com"
 dockerdomain: "bootstrapper"
+k8s_service_cluster_ip_range:192.168.0.0/24
+k8s_cluster_dns: 192.168.0.10
+hyperkube_version: "v1.3.6"
+pause_version: "3.0"
+flannel_version: "0.5.5"
 
 nodes:
   - mac: "08:00:27:4a:2d:a1"
@@ -33,24 +39,17 @@ nodes:
 
 ssh_authorized_keys: |1+
     - "<SSH_KEY>"
-EOF
-
-
-ssh_key=`cat ~/.ssh/authorized_keys` 
-sed -i -e 's#<SSH_KEY>#'"$ssh_key"'#' /root/auto-install/cloud-config-server/template/unisound-ailab/build_config.yml
 
 ```
 
 ２．启动bootstrapper
 ```
 cd vm-cluster
+./prepare_install_bootstrapper.sh
 vagrant up bootstrapper
 ```
 * 默认启动时会从 github 下载 bootstrapper 源码
 * 执行 bsroot.sh 脚本(下载pxe镜像,生成 pxe 的配置，dns dhcp配置，registry 配置,配置 cloudconfig server 环境,下载k8s依赖镜像）
-* 生成ca证书
-* 根据 Dockerfile 生成 bootstrapper 镜像
-* 启动 bootstrapper 容器（启动 dns，dhcp,docker registry,cloudconfig server）
 
 ３．启动 k8s master，安装 k8s master 节点
 ```
