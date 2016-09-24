@@ -14,7 +14,12 @@ Vagrant.configure("2") do |config|
     bs.vm.box = "coreos-stable"
     bs.vm.box_url = "https://storage.googleapis.com/stable.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % [$update_channel, $image_version]
     bs.vm.hostname = "bootstrapper"
+    #创建内部网卡，便于和其他虚拟机通信
     bs.vm.network "private_network", ip: "192.168.8.101",virtualbox__intnet: true
+    #将本地目录挂载到bootstrapper虚拟机
+    bs.vm.synced_folder "./bsroot", "/bsroot", type: "rsync"
+    #挂载的时候，需要依赖hostonly网卡
+    bs.vm.network "private_network", type: "dhcp",:adapter=>3
     bs.vm.provision "shell", path: "provision_bootstrapper_vm.sh"
     bs.vm.provider "virtualbox" do |vb|
       vb.gui = false
@@ -30,7 +35,7 @@ Vagrant.configure("2") do |config|
       master.vm.provider "virtualbox" do |ms|
          ms.gui = true
     	 ms.memory = "1024"
-    	 ms.customize ["modifyvm", :id, "--boot1", "disk", "--boot2", "net"]
+    	 ms.customize ["modifyvm", :id, "--boot1", "disk", "--boot2", "net","--macaddress1", "auto", "--usb", "off", "--usbehci", "off"]
       end
    end
 
@@ -42,7 +47,7 @@ Vagrant.configure("2") do |config|
       worker.vm.provider "virtualbox" do |wk|
          wk.gui = true
          wk.memory = "1024"
-         wk.customize ["modifyvm", :id, "--boot1", "disk", "--boot2", "net", "--macaddress1", "auto"]
+         wk.customize ["modifyvm", :id, "--boot1", "disk", "--boot2", "net", "--macaddress1", "auto", "--usb", "off", "--usbehci", "off"]
       end
    end
 end
